@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: demo.ms.serviceb.api.KafkaPersonEventConsumerTest
--------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.858 s -- in demo.ms.serviceb.api.KafkaPersonEventConsumerTest

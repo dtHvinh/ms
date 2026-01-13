@@ -1,9 +1,0 @@
-demo\ms\servicea\api\HttpUtil.class
-demo\ms\servicea\api\Activator.class
-demo\ms\servicea\api\Env.class
-demo\ms\servicea\api\Main.class
-demo\ms\servicea\api\ServiceA.class
-demo\ms\servicea\api\PersonEventProducer.class
-demo\ms\servicea\api\PersonStore.class
-demo\ms\servicea\api\KafkaPersonEventProducer.class
-demo\ms\servicea\api\PersonHttpHandler.class
