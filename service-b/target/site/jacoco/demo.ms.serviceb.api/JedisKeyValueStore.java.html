@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>JedisKeyValueStore.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">service-b</a> &gt; <a href="index.source.html" class="el_package">demo.ms.serviceb.api</a> &gt; <span class="el_source">JedisKeyValueStore.java</span></div><h1>JedisKeyValueStore.java</h1><pre class="source lang-java linenums">package demo.ms.serviceb.api;
+
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
+
+public final class JedisKeyValueStore implements KeyValueStore {
+    private final JedisPool pool;
+
+<span class="fc" id="L9">    public JedisKeyValueStore(String host, int port) {</span>
+<span class="pc bpc" id="L10" title="1 of 4 branches missed.">        if (host == null || host.isBlank()) {</span>
+<span class="fc" id="L11">            throw new IllegalArgumentException(&quot;redis host is required&quot;);</span>
+        }
+<span class="fc" id="L13">        this.pool = new JedisPool(host, port);</span>
+<span class="fc" id="L14">    }</span>
+
+    @Override
+    public String get(String key) {
+<span class="nc" id="L18">        try (Jedis jedis = pool.getResource()) {</span>
+<span class="nc" id="L19">            return jedis.get(key);</span>
+        }
+    }
+
+    @Override
+    public void set(String key, String value) {
+<span class="nc" id="L25">        try (Jedis jedis = pool.getResource()) {</span>
+<span class="nc" id="L26">            jedis.set(key, value);</span>
+        }
+<span class="nc" id="L28">    }</span>
+
+    @Override
+    public void del(String key) {
+<span class="nc" id="L32">        try (Jedis jedis = pool.getResource()) {</span>
+<span class="nc" id="L33">            jedis.del(key);</span>
+        }
+<span class="nc" id="L35">    }</span>
+
+    @Override
+    public void close() {
+<span class="fc" id="L39">        pool.close();</span>
+<span class="fc" id="L40">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.13.202504020838</span></div></body></html>

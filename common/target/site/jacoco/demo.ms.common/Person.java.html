@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Person.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">common</a> &gt; <a href="index.source.html" class="el_package">demo.ms.common</a> &gt; <span class="el_source">Person.java</span></div><h1>Person.java</h1><pre class="source lang-java linenums">package demo.ms.common;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.util.Objects;
+
+public final class Person {
+    private final String id;
+    private final String name;
+    private final int age;
+
+    @JsonCreator
+    public Person(
+            @JsonProperty(&quot;id&quot;) String id,
+            @JsonProperty(&quot;name&quot;) String name,
+<span class="fc" id="L17">            @JsonProperty(&quot;age&quot;) int age) {</span>
+<span class="fc" id="L18">        this.id = id;</span>
+<span class="fc" id="L19">        this.name = name;</span>
+<span class="fc" id="L20">        this.age = age;</span>
+<span class="fc" id="L21">    }</span>
+
+    public String getId() {
+<span class="fc" id="L24">        return id;</span>
+    }
+
+    public String getName() {
+<span class="fc" id="L28">        return name;</span>
+    }
+
+    public int getAge() {
+<span class="fc" id="L32">        return age;</span>
+    }
+
+    @Override
+    public boolean equals(Object o) {
+<span class="fc bfc" id="L37" title="All 2 branches covered.">        if (this == o)</span>
+<span class="fc" id="L38">            return true;</span>
+<span class="fc bfc" id="L39" title="All 2 branches covered.">        if (!(o instanceof Person person))</span>
+<span class="fc" id="L40">            return false;</span>
+<span class="pc bpc" id="L41" title="2 of 6 branches missed.">        return age == person.age &amp;&amp; Objects.equals(id, person.id) &amp;&amp; Objects.equals(name, person.name);</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="fc" id="L46">        return Objects.hash(id, name, age);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.13.202504020838</span></div></body></html>

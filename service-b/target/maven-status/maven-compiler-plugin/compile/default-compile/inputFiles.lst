@@ -1,0 +1,9 @@
+E:\Dev\Project\ms\service-b\src\main\java\demo\ms\serviceb\api\Activator.java
+E:\Dev\Project\ms\service-b\src\main\java\demo\ms\serviceb\api\Env.java
+E:\Dev\Project\ms\service-b\src\main\java\demo\ms\serviceb\api\JedisKeyValueStore.java
+E:\Dev\Project\ms\service-b\src\main\java\demo\ms\serviceb\api\KafkaPersonEventConsumer.java
+E:\Dev\Project\ms\service-b\src\main\java\demo\ms\serviceb\api\KeyValueStore.java
+E:\Dev\Project\ms\service-b\src\main\java\demo\ms\serviceb\api\PersonEventHandler.java
+E:\Dev\Project\ms\service-b\src\main\java\demo\ms\serviceb\api\PersonRepository.java
+E:\Dev\Project\ms\service-b\src\main\java\demo\ms\serviceb\api\RedisPersonRepository.java
+E:\Dev\Project\ms\service-b\src\main\java\demo\ms\serviceb\api\ServiceB.java
