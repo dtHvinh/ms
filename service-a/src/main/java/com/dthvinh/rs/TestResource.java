@@ -11,7 +11,6 @@ import org.osgi.service.component.annotations.Component;
         service = Servlet.class,
         property = {
                 "osgi.http.whiteboard.servlet.pattern=/api/test",
-                "osgi.http.whiteboard.context.select=(osgi.http.whiteboard.context.name=default)"
         }
 )
 public class TestResource extends HttpServlet {

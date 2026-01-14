@@ -1,10 +1,12 @@
+# service-a Dockerfile (Karaf + Pax Web) - builds and deploys the OSGi bundle
+
 FROM maven:3.9.6-eclipse-temurin-17 AS build
 WORKDIR /workspace
 
-COPY service-a/pom.xml service-a/pom.xml
-COPY service-a/src service-a/src
+COPY pom.xml pom.xml
+COPY src src
 
-RUN mvn -f service-a/pom.xml -DskipTests package
+RUN mvn -f pom.xml -DskipTests package
 
 
 FROM apache/karaf:4.4.6 AS karaf
@@ -25,8 +27,8 @@ RUN set -eux; \
   PAX_WEB_REPO="mvn:org.ops4j.pax.web/pax-web-features/${PAX_WEB_VERSION}/xml/features"; \
   grep -q "org.ops4j.pax.web/pax-web-features" "$FEATURES_CFG" || \
     sed -i "s@^featuresRepositories *= *@&${PAX_WEB_REPO},@" "$FEATURES_CFG"; \
-  sed -i 's/^featuresBoot *= */&scr,pax-web-specs,pax-web-http-jetty,pax-web-whiteboard,/' "$FEATURES_CFG"
+  sed -i 's/^featuresBoot *= */featuresBoot = scr,pax-web-http-jetty,pax-web-whiteboard,/' "$FEATURES_CFG"
 
-COPY --from=build /workspace/service-a/target/service-a-1.0-SNAPSHOT.jar ${KARAF_HOME}/deploy/
+COPY --from=build /workspace/target/service-a-1.0-SNAPSHOT.jar ${KARAF_HOME}/deploy/
 
 CMD ["/opt/apache-karaf-4.4.6/bin/karaf", "run"]
