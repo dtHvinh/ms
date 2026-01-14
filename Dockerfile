@@ -1,0 +1,32 @@
+FROM maven:3.9.6-eclipse-temurin-17 AS build
+WORKDIR /workspace
+
+COPY service-a/pom.xml service-a/pom.xml
+COPY service-a/src service-a/src
+
+RUN mvn -f service-a/pom.xml -DskipTests package
+
+
+FROM apache/karaf:4.4.6 AS karaf
+
+FROM eclipse-temurin:17-jre-jammy
+
+ARG KARAF_VERSION=4.4.6
+ARG PAX_WEB_VERSION=10.0.0
+
+ENV KARAF_HOME=/opt/apache-karaf-${KARAF_VERSION}
+
+COPY --from=karaf ${KARAF_HOME} ${KARAF_HOME}
+
+EXPOSE 8181
+
+RUN set -eux; \
+  FEATURES_CFG="$KARAF_HOME/etc/org.apache.karaf.features.cfg"; \
+  PAX_WEB_REPO="mvn:org.ops4j.pax.web/pax-web-features/${PAX_WEB_VERSION}/xml/features"; \
+  grep -q "org.ops4j.pax.web/pax-web-features" "$FEATURES_CFG" || \
+    sed -i "s@^featuresRepositories *= *@&${PAX_WEB_REPO},@" "$FEATURES_CFG"; \
+  sed -i 's/^featuresBoot *= */&scr,pax-web-specs,pax-web-http-jetty,pax-web-whiteboard,/' "$FEATURES_CFG"
+
+COPY --from=build /workspace/service-a/target/service-a-1.0-SNAPSHOT.jar ${KARAF_HOME}/deploy/
+
+CMD ["/opt/apache-karaf-4.4.6/bin/karaf", "run"]
