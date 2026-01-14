@@ -1,17 +1,23 @@
 package com.dthvinh.libs.servlet;
 
-import com.google.gson.Gson;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Optional;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.gson.Gson;
 
 public abstract class Endpoint extends HttpServlet {
+    protected final Logger log = LoggerFactory.getLogger(getClass());
     protected Gson gson = new Gson();
     protected HttpServletRequest req;
     protected HttpServletResponse resp;
@@ -22,12 +28,25 @@ public abstract class Endpoint extends HttpServlet {
             HttpServletResponse resp)
             throws ServletException, IOException {
 
+        long startNs = System.nanoTime();
+        String method = req.getMethod();
+        String uri = req.getRequestURI();
+        String query = req.getQueryString();
+        String pathWithQuery = query == null ? uri : (uri + "?" + query);
+
         this.req = req;
         this.resp = resp;
 
         try {
+            log.info("=> {} {}", method, pathWithQuery);
             super.service(req, resp);
+        } catch (Exception ex) {
+            log.error("!! {} {}", method, pathWithQuery, ex);
+            throw ex;
         } finally {
+            long elapsedMs = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startNs);
+            int status = resp.getStatus();
+            log.info("<= {} {} -> {} ({}ms)", method, pathWithQuery, status, elapsedMs);
             this.req = null;
             this.resp = null;
         }

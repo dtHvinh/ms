@@ -1,13 +1,13 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1768430382598
+Bnd-LastModified: 1768432125721
 Build-Jdk-Spec: 21
 Bundle-ClassPath: .,jakarta.servlet-api-4.0.4.jar,org.osgi.service.compo
  nent.annotations-1.5.1.jar,osgi.annotation-8.1.0.jar,org.osgi.namespace
  .extender-1.0.1.jar,org.osgi.util.function-1.0.0.jar,org.osgi.util.prom
  ise-1.0.0.jar,reflections-0.9.12.jar,javassist-3.26.0-GA.jar,gson-2.13.
  2.jar,error_prone_annotations-2.41.0.jar,kafka-clients-4.1.1.jar,zstd-j
- ni-1.5.6-10.jar,lz4-java-1.8.0.jar,snappy-java-1.1.10.7.jar,slf4j-api-1
- .7.36.jar,lombok-1.18.42.jar
+ ni-1.5.6-10.jar,lz4-java-1.8.0.jar,snappy-java-1.1.10.7.jar,lombok-1.18
+ .42.jar,slf4j-api-2.0.17.jar
 Bundle-ManifestVersion: 2
 Bundle-Name: service-a
 Bundle-SymbolicName: com.dthvinh.service-a
@@ -31,9 +31,9 @@ Embedded-Artifacts: jakarta.servlet-api-4.0.4.jar;g="jakarta.servlet";a=
  lients-4.1.1.jar;g="org.apache.kafka";a="kafka-clients";v="4.1.1",zstd-
  jni-1.5.6-10.jar;g="com.github.luben";a="zstd-jni";v="1.5.6-10",lz4-jav
  a-1.8.0.jar;g="org.lz4";a="lz4-java";v="1.8.0",snappy-java-1.1.10.7.jar
- ;g="org.xerial.snappy";a="snappy-java";v="1.1.10.7",slf4j-api-1.7.36.ja
- r;g="org.slf4j";a="slf4j-api";v="1.7.36",lombok-1.18.42.jar;g="org.proj
- ectlombok";a="lombok";v="1.18.42"
+ ;g="org.xerial.snappy";a="snappy-java";v="1.1.10.7",lombok-1.18.42.jar;
+ g="org.projectlombok";a="lombok";v="1.18.42",slf4j-api-2.0.17.jar;g="or
+ g.slf4j";a="slf4j-api";v="2.0.17"
 Export-Package: SCL.lombok.Class50.lombok.eclipse.agent;version="1.0.0.S
  NAPSHOT",SCL.lombok.Class50.lombok.launch;version="1.0.0.SNAPSHOT",SCL.
  lombok.com.zwitserloot.cmdreader;version="1.0.0.SNAPSHOT",SCL.lombok.lo
@@ -375,39 +375,40 @@ Export-Package: SCL.lombok.Class50.lombok.eclipse.agent;version="1.0.0.S
  2";uses:="org.reflections",org.reflections.util;version="0.9.12";uses:=
  "javax.servlet,org.reflections,org.reflections.adapters,org.reflections
  .scanners,org.reflections.serializers,org.slf4j",org.reflections.vfs;ve
- rsion="0.9.12",org.slf4j;version="1.7.36";uses:="org.slf4j.spi",org.slf
- 4j.event;version="1.7.36";uses:="org.slf4j,org.slf4j.helpers",org.slf4j
- .helpers;version="1.7.36";uses:="org.slf4j,org.slf4j.event,org.slf4j.sp
- i",org.slf4j.spi;version="1.7.36";uses:="org.slf4j",org.xerial.snappy;v
- ersion="1.1.10";uses:="org.osgi.framework,org.xerial.snappy.buffer,org.
- xerial.snappy.pool",org.xerial.snappy.buffer;version="1.1.10",org.xeria
- l.snappy.native;version="1.0.0.SNAPSHOT",org.xerial.snappy.native.AIX.p
- pc;version="1.0.0.SNAPSHOT",org.xerial.snappy.native.AIX.ppc64;version=
- "1.0.0.SNAPSHOT",org.xerial.snappy.native.FreeBSD.x86;version="1.0.0.SN
- APSHOT",org.xerial.snappy.native.FreeBSD.x86_64;version="1.0.0.SNAPSHOT
- ",org.xerial.snappy.native.Linux.aarch64;version="1.0.0.SNAPSHOT",org.x
- erial.snappy.native.Linux.android-aarch64;version="1.0.0.SNAPSHOT",org.
- xerial.snappy.native.Linux.android-arm;version="1.0.0.SNAPSHOT",org.xer
- ial.snappy.native.Linux.arm;version="1.0.0.SNAPSHOT",org.xerial.snappy.
- native.Linux.armv6;version="1.0.0.SNAPSHOT",org.xerial.snappy.native.Li
- nux.armv7;version="1.0.0.SNAPSHOT",org.xerial.snappy.native.Linux.loong
- arch64;version="1.0.0.SNAPSHOT",org.xerial.snappy.native.Linux.ppc;vers
- ion="1.0.0.SNAPSHOT",org.xerial.snappy.native.Linux.ppc64;version="1.0.
- 0.SNAPSHOT",org.xerial.snappy.native.Linux.ppc64le;version="1.0.0.SNAPS
- HOT",org.xerial.snappy.native.Linux.riscv64;version="1.0.0.SNAPSHOT",or
- g.xerial.snappy.native.Linux.s390x;version="1.0.0.SNAPSHOT",org.xerial.
- snappy.native.Linux.x86;version="1.0.0.SNAPSHOT",org.xerial.snappy.nati
- ve.Linux.x86_64;version="1.0.0.SNAPSHOT",org.xerial.snappy.native.Mac.a
- arch64;version="1.0.0.SNAPSHOT",org.xerial.snappy.native.Mac.x86;versio
- n="1.0.0.SNAPSHOT",org.xerial.snappy.native.Mac.x86_64;version="1.0.0.S
- NAPSHOT",org.xerial.snappy.native.SunOS.sparc;version="1.0.0.SNAPSHOT",
- org.xerial.snappy.native.SunOS.x86;version="1.0.0.SNAPSHOT",org.xerial.
- snappy.native.SunOS.x86_64;version="1.0.0.SNAPSHOT",org.xerial.snappy.n
- ative.Windows.aarch64;version="1.0.0.SNAPSHOT",org.xerial.snappy.native
- .Windows.x86;version="1.0.0.SNAPSHOT",org.xerial.snappy.native.Windows.
- x86_64;version="1.0.0.SNAPSHOT",org.xerial.snappy.pool;version="1.1.10"
- ,win.aarch64;version="1.0.0.SNAPSHOT",win.amd64;version="1.0.0.SNAPSHOT
- ",win.x86;version="1.0.0.SNAPSHOT"
+ rsion="0.9.12",org.slf4j;version="2.0.17";uses:="org.slf4j.event,org.sl
+ f4j.helpers,org.slf4j.spi",org.slf4j.event;version="2.0.17";uses:="org.
+ slf4j,org.slf4j.helpers",org.slf4j.helpers;version="2.0.17";uses:="org.
+ slf4j,org.slf4j.event,org.slf4j.spi",org.slf4j.spi;version="2.0.17";use
+ s:="org.slf4j,org.slf4j.event,org.slf4j.helpers",org.xerial.snappy;vers
+ ion="1.1.10";uses:="org.osgi.framework,org.xerial.snappy.buffer,org.xer
+ ial.snappy.pool",org.xerial.snappy.buffer;version="1.1.10",org.xerial.s
+ nappy.native;version="1.0.0.SNAPSHOT",org.xerial.snappy.native.AIX.ppc;
+ version="1.0.0.SNAPSHOT",org.xerial.snappy.native.AIX.ppc64;version="1.
+ 0.0.SNAPSHOT",org.xerial.snappy.native.FreeBSD.x86;version="1.0.0.SNAPS
+ HOT",org.xerial.snappy.native.FreeBSD.x86_64;version="1.0.0.SNAPSHOT",o
+ rg.xerial.snappy.native.Linux.aarch64;version="1.0.0.SNAPSHOT",org.xeri
+ al.snappy.native.Linux.android-aarch64;version="1.0.0.SNAPSHOT",org.xer
+ ial.snappy.native.Linux.android-arm;version="1.0.0.SNAPSHOT",org.xerial
+ .snappy.native.Linux.arm;version="1.0.0.SNAPSHOT",org.xerial.snappy.nat
+ ive.Linux.armv6;version="1.0.0.SNAPSHOT",org.xerial.snappy.native.Linux
+ .armv7;version="1.0.0.SNAPSHOT",org.xerial.snappy.native.Linux.loongarc
+ h64;version="1.0.0.SNAPSHOT",org.xerial.snappy.native.Linux.ppc;version
+ ="1.0.0.SNAPSHOT",org.xerial.snappy.native.Linux.ppc64;version="1.0.0.S
+ NAPSHOT",org.xerial.snappy.native.Linux.ppc64le;version="1.0.0.SNAPSHOT
+ ",org.xerial.snappy.native.Linux.riscv64;version="1.0.0.SNAPSHOT",org.x
+ erial.snappy.native.Linux.s390x;version="1.0.0.SNAPSHOT",org.xerial.sna
+ ppy.native.Linux.x86;version="1.0.0.SNAPSHOT",org.xerial.snappy.native.
+ Linux.x86_64;version="1.0.0.SNAPSHOT",org.xerial.snappy.native.Mac.aarc
+ h64;version="1.0.0.SNAPSHOT",org.xerial.snappy.native.Mac.x86;version="
+ 1.0.0.SNAPSHOT",org.xerial.snappy.native.Mac.x86_64;version="1.0.0.SNAP
+ SHOT",org.xerial.snappy.native.SunOS.sparc;version="1.0.0.SNAPSHOT",org
+ .xerial.snappy.native.SunOS.x86;version="1.0.0.SNAPSHOT",org.xerial.sna
+ ppy.native.SunOS.x86_64;version="1.0.0.SNAPSHOT",org.xerial.snappy.nati
+ ve.Windows.aarch64;version="1.0.0.SNAPSHOT",org.xerial.snappy.native.Wi
+ ndows.x86;version="1.0.0.SNAPSHOT",org.xerial.snappy.native.Windows.x86
+ _64;version="1.0.0.SNAPSHOT",org.xerial.snappy.pool;version="1.1.10",wi
+ n.aarch64;version="1.0.0.SNAPSHOT",win.amd64;version="1.0.0.SNAPSHOT",w
+ in.x86;version="1.0.0.SNAPSHOT"
 Import-Package: com.dthvinh.dto;resolution:=optional,com.dthvinh.libs.co
  mmon;resolution:=optional,com.dthvinh.libs.kafka.event;resolution:=opti
  onal,com.dthvinh.libs.servlet;resolution:=optional,com.dthvinh.rs;resol
@@ -559,10 +560,10 @@ Import-Package: com.dthvinh.dto;resolution:=optional,com.dthvinh.libs.co
  version="[0.9,1)",org.reflections.serializers;resolution:=optional;vers
  ion="[0.9,1)",org.reflections.util;resolution:=optional;version="[0.9,1
  )",org.reflections.vfs;resolution:=optional;version="[0.9,1)",org.slf4j
- ;resolution:=optional;version="[1.7,2)",org.slf4j.event;resolution:=opt
- ional;version="[1.7,2)",org.slf4j.helpers;resolution:=optional;version=
- "[1.7,2)",org.slf4j.impl;resolution:=optional,org.slf4j.spi;resolution:
- =optional;version="[1.7,2)",org.xerial.snappy;resolution:=optional;vers
+ ;resolution:=optional;version="[2.0,3)",org.slf4j.event;resolution:=opt
+ ional;version="[2.0,3)",org.slf4j.helpers;resolution:=optional;version=
+ "[2.0,3)",org.slf4j.impl;resolution:=optional,org.slf4j.spi;resolution:
+ =optional;version="[2.0,3)",org.xerial.snappy;resolution:=optional;vers
  ion="[1.1,2)",org.xerial.snappy.buffer;resolution:=optional;version="[1
  .1,2)",org.xerial.snappy.pool;resolution:=optional;version="[1.1,2)",su
  n.misc;resolution:=optional,sun.security.krb5;resolution:=optional
