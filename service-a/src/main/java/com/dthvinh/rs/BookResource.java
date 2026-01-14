@@ -1,28 +1,23 @@
-import java.io.IOException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+package com.dthvinh.rs;
+
+import com.dthvinh.libs.servlet.Endpoint;
 import org.osgi.service.component.annotations.Component;
 
+import javax.servlet.Servlet;
+import java.io.IOException;
+
 @Component(
-  service = Servlet.class,
-  property = {
-    "osgi.http.whiteboard.servlet.pattern=/api/books/*"
-  }
+        service = Servlet.class,
+        property = {
+                "osgi.http.whiteboard.servlet.pattern=/api/books/*",
+                "osgi.http.whiteboard.servlet.name=books-servlet",
+                "osgi.http.whiteboard.context.select=(osgi.http.whiteboard.context.name=default)"
+        }
 )
-public class BooksServlet extends HttpServlet {
-  @Override
-  protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-    // For /api/books/1 -> pathInfo is "/1"
-    String pathInfo = req.getPathInfo(); // null or "/1" or "/1/chapters"
-    // You can also use req.getRequestURI() if you prefer.
-
-    String id = null;
-    if (pathInfo != null && pathInfo.length() > 1) {
-      id = pathInfo.substring(1); // "1" (you can split by "/" for more segments)
+public class BookResource extends Endpoint {
+    @Override
+    protected void handleGet() throws IOException {
+        resp.setContentType("text/plain");
+        resp.getWriter().write("book id = " + 12);
     }
-
-    resp.setContentType("text/plain");
-    resp.getWriter().write("book id = " + id);
-  }
 }

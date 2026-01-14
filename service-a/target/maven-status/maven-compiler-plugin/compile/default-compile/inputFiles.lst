@@ -1,3 +1,12 @@
-E:\Dev\Project\ms\service-a\src\main\java\com\dthvinh\Main.java
-E:\Dev\Project\ms\service-a\src\main\java\com\dthvinh\rs\JaxrsApplication.java
-E:\Dev\Project\ms\service-a\src\main\java\com\dthvinh\rs\TestResource.java
+/home/ptamnguy/codeVinh/project/ms/service-a/src/main/java/com/dthvinh/dto/CreatePersonDto.java
+/home/ptamnguy/codeVinh/project/ms/service-a/src/main/java/com/dthvinh/libs/common/ApplicationConstants.java
+/home/ptamnguy/codeVinh/project/ms/service-a/src/main/java/com/dthvinh/libs/common/ER.java
+/home/ptamnguy/codeVinh/project/ms/service-a/src/main/java/com/dthvinh/libs/common/Env.java
+/home/ptamnguy/codeVinh/project/ms/service-a/src/main/java/com/dthvinh/libs/kafka/event/CreatePersonEventArgs.java
+/home/ptamnguy/codeVinh/project/ms/service-a/src/main/java/com/dthvinh/libs/kafka/event/EventArgs.java
+/home/ptamnguy/codeVinh/project/ms/service-a/src/main/java/com/dthvinh/libs/kafka/publisher/KafkaPublisher.java
+/home/ptamnguy/codeVinh/project/ms/service-a/src/main/java/com/dthvinh/libs/servlet/Endpoint.java
+/home/ptamnguy/codeVinh/project/ms/service-a/src/main/java/com/dthvinh/models/Person.java
+/home/ptamnguy/codeVinh/project/ms/service-a/src/main/java/com/dthvinh/rs/BookResource.java
+/home/ptamnguy/codeVinh/project/ms/service-a/src/main/java/com/dthvinh/rs/PersonResource.java
+/home/ptamnguy/codeVinh/project/ms/service-a/src/main/java/com/dthvinh/rs/TestResource.java
