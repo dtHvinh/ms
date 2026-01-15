@@ -1,7 +1,9 @@
 package com.dthvinh.dto;
 
-public record UpdatePersonDto(int id, String name, int age) {
-    public int getId() {
+import java.util.UUID;
+
+public record UpdatePersonDto(UUID id, String name, int age) {
+    public UUID getId() {
         return id;
     }
 }

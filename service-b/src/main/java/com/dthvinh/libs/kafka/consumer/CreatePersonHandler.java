@@ -11,6 +11,8 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
+import java.util.UUID;
+
 @Component(immediate = true, service = EventConsumer.class)
 @EventHandler(eventKey = Events.CreatePersonEvent)
 public class CreatePersonHandler extends EventConsumer<CreatePersonData> {
@@ -25,6 +27,6 @@ public class CreatePersonHandler extends EventConsumer<CreatePersonData> {
     public void handleData(CreatePersonData e) {
         log.info("Received create person request {}", e);
 
-        cachingService.cache(KeyService.createKey(e.id()), e);
+        cachingService.cache(KeyService.createKey(UUID.randomUUID()), e);
     }
 }

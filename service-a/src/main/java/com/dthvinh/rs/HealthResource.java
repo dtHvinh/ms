@@ -1,11 +1,13 @@
 package com.dthvinh.rs;
 
-import com.dthvinh.libs.servlet.Endpoint;
-import org.osgi.service.component.annotations.Component;
-
-import javax.servlet.Servlet;
 import java.io.IOException;
 import java.util.Map;
+
+import javax.servlet.Servlet;
+
+import org.osgi.service.component.annotations.Component;
+
+import com.dthvinh.libs.servlet.Endpoint;
 
 @Component(service = Servlet.class, property = {
         "osgi.http.whiteboard.servlet.pattern=/api/health",
