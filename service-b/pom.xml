@@ -5,21 +5,22 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.dthvinh</groupId>
-    <artifactId>service-a</artifactId>
+    <artifactId>service-b</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>bundle</packaging>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <dependencies>
         <dependency>
-            <groupId>jakarta.servlet</groupId>
-            <artifactId>jakarta.servlet-api</artifactId>
-            <version>4.0.4</version>
-            <scope>provided</scope>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>2.0.17</version>
+            <scope>compile</scope>
         </dependency>
 
         <dependency>
@@ -30,10 +31,38 @@
         </dependency>
 
         <dependency>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka-clients</artifactId>
+            <version>4.0.0</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>6.0.2</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+            <version>4.0.4</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>5.21.0</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
             <groupId>org.reflections</groupId>
             <artifactId>reflections</artifactId>
-            <version>0.9.12</version>
-            <type>jar</type>
+            <version>0.10.2</version>
+            <scope>compile</scope>
         </dependency>
 
         <dependency>
@@ -44,24 +73,10 @@
         </dependency>
 
         <dependency>
-            <groupId>org.apache.kafka</groupId>
-            <artifactId>kafka-clients</artifactId>
-            <version>4.0.0</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>RELEASE</version>
             <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>2.0.17</version>
-            <scope>compile</scope>
         </dependency>
     </dependencies>
 
@@ -132,5 +147,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>

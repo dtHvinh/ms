@@ -1,26 +1,64 @@
 package com.dthvinh.libs.servlet;
 
+import com.dthvinh.libs.common.ApplicationConstants;
+import com.dthvinh.libs.common.Env;
+import com.dthvinh.libs.kafka.publisher.KafkaPublisher;
+import com.google.gson.Gson;
+import org.osgi.service.component.annotations.Deactivate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.gson.Gson;
-
 public abstract class Endpoint extends HttpServlet {
     protected final Logger log = LoggerFactory.getLogger(getClass());
     protected Gson gson = new Gson();
     protected HttpServletRequest req;
     protected HttpServletResponse resp;
+    protected volatile KafkaPublisher publisher;
+
+    @Deactivate
+    void deactivate() {
+        KafkaPublisher toClose = publisher;
+        publisher = null;
+        if (toClose != null) {
+            try {
+                toClose.close();
+            } catch (Exception ex) {
+                log.warn("Failed to close KafkaPublisher", ex);
+            }
+        }
+    }
+
+    protected KafkaPublisher getOrCreatePublisher() {
+        KafkaPublisher existing = publisher;
+        if (existing != null) {
+            return existing;
+        }
+
+        synchronized (this) {
+            existing = publisher;
+            if (existing != null) {
+                return existing;
+            }
+
+            String bootstrapServers = Env.KAFKA_BOOTSTRAP_SERVER;
+            if (bootstrapServers == null || bootstrapServers.isBlank()) {
+                return null;
+            }
+
+            publisher = new KafkaPublisher(bootstrapServers, ApplicationConstants.AppGlobalTopic);
+            return publisher;
+        }
+    }
 
     @Override
     protected final void service(

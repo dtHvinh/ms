@@ -1,5 +1,3 @@
-# service-a Dockerfile (Karaf + Pax Web) - builds and deploys the OSGi bundle
-
 FROM docker.io/maven:3.9.6-eclipse-temurin-17 AS build
 WORKDIR /workspace
 
@@ -18,9 +16,15 @@ ARG PAX_WEB_VERSION=10.0.0
 
 ENV KARAF_HOME=/opt/apache-karaf-${KARAF_VERSION}
 
+ENV JAVA_MIN_MEM=128M
+ENV JAVA_MAX_MEM=768M
+
 COPY --from=karaf ${KARAF_HOME} ${KARAF_HOME}
 
 EXPOSE 8181
+
+RUN curl -L -o ${KARAF_HOME}/deploy/kafka-clients-osgi.jar \
+    https://repo1.maven.org/maven2/org/apache/servicemix/bundles/org.apache.servicemix.bundles.kafka-clients/4.0.0_1/org.apache.servicemix.bundles.kafka-clients-4.0.0_1.jar
 
 RUN set -eux; \
   FEATURES_CFG="$KARAF_HOME/etc/org.apache.karaf.features.cfg"; \

@@ -11,9 +11,9 @@ import org.apache.kafka.common.serialization.StringSerializer;
 import java.util.Properties;
 
 public class KafkaPublisher implements AutoCloseable {
-    private final KafkaProducer<String, String> producer;
     private final String topic;
     private final Gson mapper;
+    private KafkaProducer<String, String> producer;
 
     public KafkaPublisher(String bootstrapServers, String topic) {
         this.topic = topic;
@@ -28,11 +28,18 @@ public class KafkaPublisher implements AutoCloseable {
         props.put(ProducerConfig.RETRIES_CONFIG, 3);
         props.put(ProducerConfig.LINGER_MS_CONFIG, 5);
 
-        this.producer = new KafkaProducer<>(props);
+        setProducer(props);
     }
 
     public KafkaPublisher(String topic) {
         this(Env.KAFKA_BOOTSTRAP_SERVER, topic);
+    }
+
+    private void setProducer(Properties props) {
+        ClassLoader context = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(null);
+        producer = new KafkaProducer<>(props);
+        Thread.currentThread().setContextClassLoader(context);
     }
 
     public <T> void send(EventArgs<T> e) {
