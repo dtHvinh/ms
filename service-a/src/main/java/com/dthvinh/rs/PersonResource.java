@@ -67,13 +67,6 @@ public class PersonResource extends Endpoint {
 
     @Override
     protected void handlePut() throws IOException {
-        String personId = query("id");
-
-        if (personId == null || personId.trim().isEmpty()) {
-            sendBadRequest(Map.of("reason", "Missing person ID in query or path"));
-            return;
-        }
-
         UpdatePersonDto dto;
         try {
             dto = readJsonBody(UpdatePersonDto.class);
@@ -92,13 +85,13 @@ public class PersonResource extends Endpoint {
         try {
             UpdatePersonEventArgs e = new UpdatePersonEventArgs(dto);
             publisher.send(e);
-            log.info("Person update event queued for id: {}", personId);
+            log.info("Person update event queued for id: {}", dto.getId());
             sendObject(200, Map.of(
                     "status", "update request queued",
-                    "personId", personId
+                    "personId", dto.getId()
             ));
         } catch (Exception ex) {
-            log.error("Failed to queue person update event for id: {}", personId, ex);
+            log.error("Failed to queue person update event for id: {}", dto.getId(), ex);
             send(500, "{\"reason\":\"Kafka send failed\"}");
         }
     }

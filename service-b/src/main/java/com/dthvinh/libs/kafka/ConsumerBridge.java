@@ -8,24 +8,24 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.serialization.StringDeserializer;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ConsumerBridge implements Runnable, AutoCloseable {
+
     private final Logger logger = LoggerFactory.getLogger(ConsumerBridge.class);
     private final Map<String, List<EventConsumer<?>>> eventHandlers = new ConcurrentHashMap<>();
     private final Gson mapper = new Gson();
     private KafkaConsumer<String, String> consumer;
     private volatile boolean running = true;
 
-    public ConsumerBridge(String bootstrapServer, String groupId, String[] topics) {
+    public ConsumerBridge(String bootstrapServer, String groupId, String[] topics, Collection<EventConsumer<?>> initialHandlers) {
         Properties props = new Properties();
-
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServer);
         props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
@@ -37,54 +37,75 @@ public class ConsumerBridge implements Runnable, AutoCloseable {
         setConsumer(props);
         this.consumer.subscribe(Arrays.asList(topics));
 
-        registerEventHandlers();
+        registerEventHandlers(initialHandlers);
     }
 
-    private void registerEventHandlers() {
-        logger.info("Scanning for @EventHandler annotated consumers...");
+    private void registerEventHandlers(Collection<EventConsumer<?>> initialHandlers) {
+        int available = initialHandlers == null ? 0 : initialHandlers.size();
+        logger.info("Registering EventConsumer service(s) (count={})", available);
 
-        Reflections reflections = new Reflections(
-                "com.dthvinh.libs.kafka.consumer"
-        );
+        int registeredCount = 0;
 
-        Set<Class<?>> handlerClasses = reflections.getTypesAnnotatedWith(EventHandler.class);
-
-        for (Class<?> clazz : handlerClasses) {
-            if (!EventConsumer.class.isAssignableFrom(clazz)) {
-                logger.info("Class {} is annotated with @EventHandler but does not implement EventConsumer", clazz.getName());
-                continue;
-            }
-
-            EventHandler annotation = clazz.getAnnotation(EventHandler.class);
-            String eventKey = annotation.eventKey();
-
-            if (eventKey == null || eventKey.isBlank()) {
-                logger.info("Invalid sender in @EventHandler on {}", clazz.getName());
-                continue;
-            }
-
-            try {
-                EventConsumer<?> handler = (EventConsumer<?>) clazz.getConstructor().newInstance();
-                registerConsumer(eventKey, handler);
-                logger.info("Registered handler {} for eventKey {}", clazz.getSimpleName(), eventKey);
-            } catch (Exception e) {
-                logger.error("Failed to instantiate event handler {}: {}",
-                        clazz.getName(), e.getMessage());
+        if (initialHandlers != null) {
+            for (EventConsumer<?> handler : initialHandlers) {
+                if (registerConsumerFromAnnotation(handler)) {
+                    registeredCount++;
+                }
             }
         }
 
-        if (eventHandlers.isEmpty()) {
-            logger.info("No valid @EventHandler annotated consumers found!");
+        if (registeredCount == 0) {
+            logger.warn("No event handlers were registered. In OSGi, make sure handlers are DS services of type EventConsumer.");
         } else {
-            logger.info("Found {} event handler(s)", eventHandlers.size());
+            logger.info("Successfully registered {} event handler(s)", registeredCount);
+        }
+    }
+
+    public boolean registerConsumerFromAnnotation(EventConsumer<?> handler) {
+        if (handler == null) {
+            return false;
+        }
+
+        Class<?> clazz = handler.getClass();
+        EventHandler annotation = clazz.getAnnotation(EventHandler.class);
+        if (annotation == null) {
+            logger.warn("EventConsumer {} is missing @EventHandler annotation", clazz.getName());
+            return false;
+        }
+
+        String eventKey = annotation.eventKey();
+        if (eventKey == null || eventKey.trim().isEmpty()) {
+            logger.warn("Invalid/missing eventKey in @EventHandler on {}", clazz.getName());
+            return false;
+        }
+
+        registerConsumer(eventKey, handler);
+        logger.info("Registered handler {} for eventKey '{}'", clazz.getSimpleName(), eventKey);
+        return true;
+    }
+
+    public void unregisterConsumerInstance(EventConsumer<?> handler) {
+        if (handler == null) {
+            return;
+        }
+
+        for (Map.Entry<String, List<EventConsumer<?>>> entry : eventHandlers.entrySet()) {
+            List<EventConsumer<?>> handlers = entry.getValue();
+            if (handlers != null) {
+                handlers.removeIf(existing -> existing == handler);
+            }
         }
     }
 
     private void setConsumer(Properties props) {
+        // This pattern is usually fine — helps avoid classloader visibility issues with Kafka libs
         ClassLoader context = Thread.currentThread().getContextClassLoader();
-        Thread.currentThread().setContextClassLoader(null);
-        consumer = new KafkaConsumer<>(props);
-        Thread.currentThread().setContextClassLoader(context);
+        try {
+            Thread.currentThread().setContextClassLoader(null);
+            consumer = new KafkaConsumer<>(props);
+        } finally {
+            Thread.currentThread().setContextClassLoader(context);
+        }
     }
 
     @Override
@@ -97,10 +118,16 @@ public class ConsumerBridge implements Runnable, AutoCloseable {
                 }
             }
         } catch (Exception e) {
-            logger.error("Error in Kafka consumer loop: {}", e.getMessage());
+            logger.error("Error in Kafka consumer loop: {}", e, e);
         } finally {
-            consumer.close();
-            logger.info("Muzic Kafka Consumer stopped");
+            if (consumer != null) {
+                try {
+                    consumer.close();
+                } catch (Exception e) {
+                    logger.warn("Error closing consumer", e);
+                }
+            }
+            logger.info("Kafka Consumer stopped");
         }
     }
 
@@ -108,17 +135,24 @@ public class ConsumerBridge implements Runnable, AutoCloseable {
         String key = record.key();
         String value = record.value();
 
-        if (value == null || value.isBlank()) {
-            logger.info("Received empty/null value from topic");
+        if (value == null || value.trim().isEmpty()) {
+            logger.debug("Received empty/null value from topic → skipping");
             return;
         }
 
-        Object data = mapper.fromJson(value, Object.class);
+        Object data;
+        try {
+            data = mapper.fromJson(value, Object.class);
+        } catch (Exception e) {
+            logger.warn("Failed to parse JSON from record (key={}, topic={}, partition={}, offset={}): {}",
+                    key, record.topic(), record.partition(), record.offset(), e.toString());
+            return;
+        }
 
         List<EventConsumer<?>> handlers = eventHandlers.get(key);
 
         if (handlers == null || handlers.isEmpty()) {
-            logger.info("No handler registered for eventKey: {}", key);
+            logger.debug("No handler registered for eventKey: {}", key);
             return;
         }
 
@@ -130,18 +164,13 @@ public class ConsumerBridge implements Runnable, AutoCloseable {
                 logger.debug("Processed event {} with handler {}", key, rawHandler.getClass().getSimpleName());
             } catch (Exception e) {
                 logger.error("Handler {} failed for event {}: {}",
-                        rawHandler.getClass().getSimpleName(), key, e.getMessage(), e);
+                        rawHandler.getClass().getSimpleName(), key, e, e);
             }
         }
     }
 
     private void registerConsumer(String key, EventConsumer<?> consumer) {
-        List<EventConsumer<?>> consumers = eventHandlers.get(key);
-        if (consumers == null) {
-            consumers = new ArrayList<>();
-        }
-        consumers.add(consumer);
-        eventHandlers.put(key, consumers);
+        eventHandlers.computeIfAbsent(key, k -> new CopyOnWriteArrayList<>()).add(consumer);
     }
 
     public void shutdown() {

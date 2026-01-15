@@ -3,40 +3,32 @@ package libTests;
 import com.dthvinh.constants.Events;
 import com.dthvinh.libs.kafka.annotation.EventHandler;
 import com.dthvinh.libs.kafka.base.EventConsumer;
+import com.dthvinh.libs.kafka.consumer.CreatePersonHandler;
+import com.dthvinh.libs.kafka.consumer.DeletePersonHandler;
+import com.dthvinh.libs.kafka.consumer.UpdatePersonHandler;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.reflections.Reflections;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ConsumerBridgeTest {
     private final Map<String, List<EventConsumer<?>>> eventHandlers = new ConcurrentHashMap<>();
 
     @Test
-    void findConsumers() throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-        Reflections reflections = new Reflections(
-                "com.dthvinh.libs.kafka.consumer"
+    void findConsumers() {
+        List<EventConsumer<?>> consumers = List.of(
+                new CreatePersonHandler(),
+                new DeletePersonHandler(),
+                new UpdatePersonHandler()
         );
 
-        Set<Class<?>> handlerClasses = reflections.getTypesAnnotatedWith(EventHandler.class);
-
-        Assertions.assertEquals(3, handlerClasses.size());
-
-        for (Class<?> clazz : handlerClasses) {
-            if (!EventConsumer.class.isAssignableFrom(clazz)) {
-                continue;
-            }
-
-            EventHandler annotation = clazz.getAnnotation(EventHandler.class);
-            String eventKey = annotation.eventKey();
-
-            EventConsumer<?> handler = (EventConsumer<?>) clazz.getConstructor().newInstance();
-            registerConsumer(eventKey, handler);
+        for (EventConsumer<?> consumer : consumers) {
+            EventHandler annotation = consumer.getClass().getAnnotation(EventHandler.class);
+            Assertions.assertNotNull(annotation);
+            registerConsumer(annotation.eventKey(), consumer);
         }
 
         Assertions.assertFalse(eventHandlers.get(Events.CreatePersonEvent).isEmpty());

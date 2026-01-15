@@ -30,13 +30,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.reflections</groupId>
-            <artifactId>reflections</artifactId>
-            <version>0.9.12</version>
-            <type>jar</type>
-        </dependency>
-
-        <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
             <version>2.13.2</version>
@@ -121,11 +114,11 @@
                         <Bundle-Version>${project.version}</Bundle-Version>
                         <_removeheaders>Private-Package,Include-Resource</_removeheaders>
 
-                        <Embed-Dependency>gson,reflections</Embed-Dependency>
+                        <Embed-Dependency>gson</Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
 
                         <Import-Package>*;resolution:=optional</Import-Package>
-                        <Export-Package>*</Export-Package>
+                        <Export-Package>com.dthvinh.*</Export-Package>
                         <DynamicImport-Package>*</DynamicImport-Package>
                     </instructions>
                 </configuration>

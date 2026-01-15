@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    xmlns="http://maven.apache.org/POM/4.0.0"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.dthvinh</groupId>
@@ -59,13 +59,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.reflections</groupId>
-            <artifactId>reflections</artifactId>
-            <version>0.10.2</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
             <version>2.13.2</version>
@@ -106,10 +99,10 @@
                             </filters>
                             <transformers>
                                 <transformer
-                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                 </transformer>
                                 <transformer
-                                        implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                                    implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
                             </transformers>
                         </configuration>
                     </execution>
@@ -136,12 +129,11 @@
                         <Bundle-Version>${project.version}</Bundle-Version>
                         <_removeheaders>Private-Package,Include-Resource</_removeheaders>
 
-                        <Embed-Dependency>gson,reflections</Embed-Dependency>
+                        <Embed-Dependency>gson</Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
 
                         <Import-Package>*;resolution:=optional</Import-Package>
-                        <Export-Package>*</Export-Package>
-                        <DynamicImport-Package>*</DynamicImport-Package>
+                        <Export-Package>com.dthvinh.*</Export-Package>
                     </instructions>
                 </configuration>
             </plugin>
