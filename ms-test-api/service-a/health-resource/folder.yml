@@ -1,5 +1,5 @@
 info:
-  name: test-resource
+  name: health-resource
   type: folder
   seq: 1
 

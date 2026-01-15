@@ -1,0 +1,4 @@
+name: ms
+variables:
+  - name: base_urll
+    value: http://localhost:8181/api

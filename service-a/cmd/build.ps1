@@ -10,6 +10,6 @@ $serviceDir = Resolve-Path (Join-Path $scriptDir '..')
 
 Write-Host "Start building image for Service A"
 
-docker build -t "microservice-service-a:$Version" -f (Join-Path $serviceDir 'Dockerfile') $serviceDir
+docker build --no-cache -t "microservice-service-a:$Version" -f (Join-Path $serviceDir 'Dockerfile') $serviceDir
 
 Write-Host "Finished building image for Service A"
