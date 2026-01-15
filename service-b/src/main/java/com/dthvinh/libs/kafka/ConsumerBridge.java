@@ -3,6 +3,9 @@ package com.dthvinh.libs.kafka;
 import com.dthvinh.libs.kafka.annotation.EventHandler;
 import com.dthvinh.libs.kafka.base.EventConsumer;
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.JsonParser;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -12,6 +15,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ConcurrentHashMap;
@@ -140,10 +145,10 @@ public class ConsumerBridge implements Runnable, AutoCloseable {
             return;
         }
 
-        Object data;
+        JsonElement payloadJson;
         try {
-            data = mapper.fromJson(value, Object.class);
-        } catch (Exception e) {
+            payloadJson = JsonParser.parseString(value);
+        } catch (JsonSyntaxException e) {
             logger.warn("Failed to parse JSON from record (key={}, topic={}, partition={}, offset={}): {}",
                     key, record.topic(), record.partition(), record.offset(), e.toString());
             return;
@@ -158,6 +163,8 @@ public class ConsumerBridge implements Runnable, AutoCloseable {
 
         for (EventConsumer<?> rawHandler : handlers) {
             try {
+                Type payloadType = resolveConsumerPayloadType(rawHandler);
+                Object data = mapper.fromJson(payloadJson, payloadType);
                 @SuppressWarnings("unchecked")
                 EventConsumer<Object> handler = (EventConsumer<Object>) rawHandler;
                 handler.handleData(data);
@@ -167,6 +174,29 @@ public class ConsumerBridge implements Runnable, AutoCloseable {
                         rawHandler.getClass().getSimpleName(), key, e, e);
             }
         }
+    }
+
+    private Type resolveConsumerPayloadType(EventConsumer<?> consumer) {
+        if (consumer == null) {
+            return Object.class;
+        }
+
+        Class<?> clazz = consumer.getClass();
+        while (clazz != null && clazz != Object.class) {
+            Type genericSuperclass = clazz.getGenericSuperclass();
+            if (genericSuperclass instanceof ParameterizedType parameterized) {
+                Type rawType = parameterized.getRawType();
+                if (rawType instanceof Class<?> rawClass && rawClass == EventConsumer.class) {
+                    Type[] args = parameterized.getActualTypeArguments();
+                    if (args != null && args.length == 1 && args[0] != null) {
+                        return args[0];
+                    }
+                }
+            }
+            clazz = clazz.getSuperclass();
+        }
+
+        return Object.class;
     }
 
     private void registerConsumer(String key, EventConsumer<?> consumer) {
