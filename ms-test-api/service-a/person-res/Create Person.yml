@@ -5,7 +5,7 @@ info:
 
 http:
   method: POST
-  url: "{{base_urll}}/person"
+  url: "{{a}}/person"
   body:
     type: json
     data: |-
