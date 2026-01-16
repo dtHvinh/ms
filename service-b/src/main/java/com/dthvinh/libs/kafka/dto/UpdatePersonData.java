@@ -1,4 +1,4 @@
 package com.dthvinh.libs.kafka.dto;
 
-public record UpdatePersonData(String name, int age) {
+public record UpdatePersonData(int id, String name, int age) {
 }
