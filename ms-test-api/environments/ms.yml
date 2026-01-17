@@ -1,0 +1,6 @@
+name: ms
+variables:
+  - name: a
+    value: http://localhost:8181/api
+  - name: b
+    value: http://localhost:8182/api

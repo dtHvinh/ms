@@ -1,0 +1,23 @@
+# Maven / Java build output
+target/
+*.class
+
+# IntelliJ / IDEA
+*.iml
+.idea/
+
+# Eclipse
+.classpath
+.project
+.settings/
+
+# VS Code
+.vscode/
+
+# OS
+Thumbs.db
+Desktop.ini
+
+# Local env files
+.env
+**/.env

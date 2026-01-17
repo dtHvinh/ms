@@ -1,0 +1,28 @@
+info:
+  name: Create Person
+  type: http
+  seq: 2
+
+http:
+  method: POST
+  url: "{{a}}/person"
+  body:
+    type: json
+    data: |-
+      {
+        "id": 1,
+        "name": "john",
+        "age": 33
+      }
+  auth: inherit
+
+runtime:
+  variables:
+    - name: base_url
+      value: http://localhost:8181/api
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

@@ -1,0 +1,2 @@
+podman build --no-cache -t microservice-service-b:1.5 .
+podman run --rm -d -p 8182:8181 -e KAFKA_BOOTSTRAP_SERVER=100.120.13.230:29092 -e REDIS_HOST=100.120.13.230 REDIS_PORT=6379 microservice-service-b:1.5

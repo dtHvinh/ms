@@ -1,0 +1,24 @@
+info:
+  name: Delete Person
+  type: http
+  seq: 3
+
+http:
+  method: DELETE
+  url: "{{a}}/person/?id=12"
+  params:
+    - name: id
+      value: "12"
+      type: query
+  auth: inherit
+
+runtime:
+  variables:
+    - name: base_url
+      value: http://localhost:8181/api
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
