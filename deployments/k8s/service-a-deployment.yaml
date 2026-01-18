@@ -29,7 +29,10 @@ spec:
               protocol: TCP
           env:
             - name: KAFKA_BOOTSTRAP_SERVER
-              value: "100.120.13.230:29092"
+              valueFrom:
+                configMapKeyRef:
+                  name: kafka-config
+                  key: KAFKA_BOOTSTRAP_SERVER
             - name: JAVA_MIN_MEM
               value: "128M"
             - name: JAVA_MAX_MEM
