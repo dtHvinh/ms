@@ -1,11 +1,16 @@
 package com.dthvinh.libs.kafka;
 
-import com.dthvinh.libs.kafka.annotation.EventHandler;
-import com.dthvinh.libs.kafka.base.EventConsumer;
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonSyntaxException;
-import com.google.gson.JsonParser;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.time.Duration;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
+
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -14,12 +19,12 @@ import org.apache.kafka.common.serialization.StringDeserializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.time.Duration;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.ConcurrentHashMap;
+import com.dthvinh.libs.kafka.annotation.EventHandler;
+import com.dthvinh.libs.kafka.base.EventConsumer;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
 
 public class ConsumerBridge implements Runnable, AutoCloseable {
 
@@ -29,7 +34,8 @@ public class ConsumerBridge implements Runnable, AutoCloseable {
     private KafkaConsumer<String, String> consumer;
     private volatile boolean running = true;
 
-    public ConsumerBridge(String bootstrapServer, String groupId, String[] topics, Collection<EventConsumer<?>> initialHandlers) {
+    public ConsumerBridge(String bootstrapServer, String groupId, String[] topics,
+            Collection<EventConsumer<?>> initialHandlers) {
         Properties props = new Properties();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServer);
         props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
@@ -42,6 +48,13 @@ public class ConsumerBridge implements Runnable, AutoCloseable {
         setConsumer(props);
         this.consumer.subscribe(Arrays.asList(topics));
 
+        registerEventHandlers(initialHandlers);
+    }
+
+    // Package-private constructor for unit tests (avoids requiring a real Kafka
+    // broker)
+    ConsumerBridge(KafkaConsumer<String, String> consumer, Collection<EventConsumer<?>> initialHandlers) {
+        this.consumer = consumer;
         registerEventHandlers(initialHandlers);
     }
 
@@ -60,7 +73,8 @@ public class ConsumerBridge implements Runnable, AutoCloseable {
         }
 
         if (registeredCount == 0) {
-            logger.warn("No event handlers were registered. In OSGi, make sure handlers are DS services of type EventConsumer.");
+            logger.warn(
+                    "No event handlers were registered. In OSGi, make sure handlers are DS services of type EventConsumer.");
         } else {
             logger.info("Successfully registered {} event handler(s)", registeredCount);
         }
@@ -103,7 +117,8 @@ public class ConsumerBridge implements Runnable, AutoCloseable {
     }
 
     private void setConsumer(Properties props) {
-        // This pattern is usually fine — helps avoid classloader visibility issues with Kafka libs
+        // This pattern is usually fine — helps avoid classloader visibility issues with
+        // Kafka libs
         ClassLoader context = Thread.currentThread().getContextClassLoader();
         try {
             Thread.currentThread().setContextClassLoader(null);
@@ -136,7 +151,7 @@ public class ConsumerBridge implements Runnable, AutoCloseable {
         }
     }
 
-    private void processRecord(ConsumerRecord<String, String> record) {
+    void processRecord(ConsumerRecord<String, String> record) {
         String key = record.key();
         String value = record.value();
 
@@ -176,7 +191,7 @@ public class ConsumerBridge implements Runnable, AutoCloseable {
         }
     }
 
-    private Type resolveConsumerPayloadType(EventConsumer<?> consumer) {
+    Type resolveConsumerPayloadType(EventConsumer<?> consumer) {
         if (consumer == null) {
             return Object.class;
         }
@@ -199,7 +214,7 @@ public class ConsumerBridge implements Runnable, AutoCloseable {
         return Object.class;
     }
 
-    private void registerConsumer(String key, EventConsumer<?> consumer) {
+    void registerConsumer(String key, EventConsumer<?> consumer) {
         eventHandlers.computeIfAbsent(key, k -> new CopyOnWriteArrayList<>()).add(consumer);
     }
 

@@ -1,24 +1,35 @@
 package com.dthvinh.libs.redis;
 
+import java.lang.reflect.Type;
+import java.util.List;
+
+import org.osgi.service.component.annotations.Component;
 
 import com.dthvinh.libs.kafka.common.Env;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
-import org.osgi.service.component.annotations.Component;
-import redis.clients.jedis.RedisClient;
 
-import java.lang.reflect.Type;
-import java.util.List;
+import redis.clients.jedis.RedisClient;
 
 @Component(immediate = true, service = CachingService.class)
 public class CachingService {
 
-    private final RedisClient jedis = RedisClient.builder()
-            .hostAndPort(Env.REDIS_HOST, Integer.parseInt(Env.REDIS_PORT))
-            .build();
+    private final RedisClient jedis;
+    private final Gson gson;
 
-    private final Gson gson = new Gson();
+    public CachingService() {
+        this(
+                RedisClient.builder()
+                        .hostAndPort(Env.REDIS_HOST, Integer.parseInt(Env.REDIS_PORT))
+                        .build(),
+                new Gson());
+    }
+
+    CachingService(RedisClient jedis, Gson gson) {
+        this.jedis = jedis;
+        this.gson = gson;
+    }
 
     public void cache(String key, Object value) {
         if (key == null || key.trim().isEmpty()) {

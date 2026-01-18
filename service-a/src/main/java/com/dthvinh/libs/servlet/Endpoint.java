@@ -20,9 +20,9 @@ import java.util.concurrent.TimeUnit;
 
 public abstract class Endpoint extends HttpServlet {
     protected final Logger log = LoggerFactory.getLogger(getClass());
+    public HttpServletRequest req;
+    public HttpServletResponse resp;
     protected Gson gson = new Gson();
-    protected HttpServletRequest req;
-    protected HttpServletResponse resp;
     protected volatile KafkaPublisher publisher;
 
     @Deactivate
